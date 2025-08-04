@@ -1,14 +1,12 @@
-# Use OpenJDK base image
-FROM openjdk:17-jdk-slim
-
-# Set working directory
+# Stage 1: Build the JAR using Maven and JDK 21
+FROM maven:3.9.6-eclipse-temurin-21 AS builder
 WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Copy the built JAR file (replace with your actual jar name if known)
-COPY target/*.jar app.jar
-
-# Expose default Spring Boot port
+# Stage 2: Run the JAR with OpenJDK 21
+FROM eclipse-temurin:21-jdk
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080
-
-# Run the application
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
