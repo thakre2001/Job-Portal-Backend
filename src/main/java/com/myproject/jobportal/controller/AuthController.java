@@ -52,42 +52,4 @@ public class AuthController {
 	public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
 		return authService.login(loginRequest);
 	}
-	
-	
-	@PutMapping("/upload-profile")
-	public ResponseEntity<?> uploadProfilePhoto(@RequestParam("file") MultipartFile file, Principal principal) throws IOException {
-		User uploadProfilePhoto = authService.uploadProfilePhoto(principal.getName(), file.getBytes());
-		return ResponseEntity.ok(uploadProfilePhoto);
-	}
-	
-	
-	@PutMapping("/update-user")
-	public ResponseEntity<?> updateUser(@RequestBody User user,@AuthenticationPrincipal UserDetails userDetails) {
-		
-		if(userDetails == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is invalid or missing");
-		}
-		String email=userDetails.getUsername();
-		
-		User updateUser = authService.updateUser(email,user);
-		
-		return ResponseEntity.ok(updateUser);
-	}
-	
-	@PutMapping("/upload-resume")
-	public ResponseEntity<?> uploadResume(@RequestParam("file") MultipartFile file, Principal principal) throws IOException {
-		User uploadResume = authService.uploadResume(file.getBytes(),principal.getName());
-		return ResponseEntity.ok(uploadResume);
-	}
-	
-	@GetMapping("/get-userProfile")
-	public ResponseEntity<User> getUserProfile(Principal principal){
-		User user=authService.getUserProfile(principal.getName());
-		return ResponseEntity.ok(user);
-	}
-	
-	@GetMapping("/allUser")
-	public List<User> getAllUser(){
-		return authService.getAllUser();
-	}
 }
